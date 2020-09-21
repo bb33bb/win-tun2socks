@@ -4,10 +4,36 @@ A tun2socks implementation written in Go.
 
 forked & modified from [eycorsican/go-tun2socks](https://github.com/eycorsican/go-tun2socks)
 
-## Preview
+作者更新后，再编译，win下报错。这是中间使用过程中一个可以编译且比较稳的一个版本。
 
-Tun2socks status web view (`-monitor` option is required)
-![status](./screenshot.png)
+## ubuntu下交叉编译命令
+
+编译64位windows程序
+
+```
+export GOOS=windows
+export GOARCH=amd64
+export CC=x86_64-w64-mingw32-gcc
+export CXX=x86_64-w64-mingw32-g++
+export CGO_ENABLED=1
+cd tun2socks
+make
+```
+
+我使用的脚本
+
+```
+route delete 0.0.0.0 mask 0.0.0.0
+route add 114.114.114.114 192.168.8.128 metric 5
+route add 8.8.8.8 192.168.8.128 metric 5
+route add ssrIP 网关IP metric 5
+# 这里查询自己的ssrip和网关ip替换即可
+start cmd /k tun2socks.exe -proxyServer 127.0.0.1:1080 -tunAddr 10.0.236.2 -tunMask 255.255.255.0 -tunGw 10.0.236.1 -tunName "SSTAP" -tunDNS 114.114.114.114,8.8.8.8
+timeout /t 4 /nobreak >nul
+route add 0.0.0.0 mask 0.0.0.0 10.0.236.1
+```
+
+最后，享受win下全局代理
 
 ## What's the difference with the original project
 
